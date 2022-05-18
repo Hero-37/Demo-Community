@@ -161,6 +161,9 @@ public class UserService implements CommunityConstant {
             return map;
         }
 
+        System.out.println(System.currentTimeMillis());
+        System.out.println(System.currentTimeMillis() + expiredSeconds * 1000);
+
         // 生成登陆凭证
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(user.getId());
@@ -229,5 +232,9 @@ public class UserService implements CommunityConstant {
 
         map.put("user", user);
         return map;
+    }
+
+    public LoginTicket findLoginTicket(String ticket) {
+        return loginTicketMapper.selectByTicket(ticket);
     }
 }
