@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.jws.Oneway;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -134,7 +133,7 @@ public class UserService implements CommunityConstant {
     public Map<String, Object> login(String username, String password, int expiredSeconds) {
         Map<String, Object> map = new HashMap<>();
 
-        // 空置处理
+        // 空值处理
         if (StringUtils.isBlank(username)) {
             map.put("usernameMsg", "账号不能为空！");
             return map;
@@ -176,5 +175,59 @@ public class UserService implements CommunityConstant {
 
     public void logout(String ticket) {
         loginTicketMapper.updateStatus(ticket, 1);
+    }
+
+    public Map<String, Object> verifyEmail(String email) {
+        Map<String, Object> map = new HashMap<>();
+
+        // 空置处理
+        if (StringUtils.isBlank(email)) {
+            // 不需要写 emailMsg 信息，直接返回就行
+            return map;
+        }
+
+        User user = userMapper.selectByEmail(email);
+        if (user == null) {
+            // 不需要写 emailMsg 信息，直接返回就行
+            return map;
+        } else {
+            // 如果能查到这个邮箱，发送邮件
+            Context context = new Context();
+            context.setVariable("email", email);
+            String code = CommunityUtil.generateUUID().substring(0, 4);
+            context.setVariable("verifyCode", code);
+            String content = templateEngine.process("/mail/forget", context);
+            mailClient.sendMail(email, "找回密码", content);
+            map.put("verifyCode", code);
+        }
+        map.put("user", user);
+        return map;
+    }
+
+    public Map<String, Object> resetPassword(String email, String password) {
+        Map<String, Object> map = new HashMap<>();
+
+        // 空值处理
+        if (StringUtils.isBlank(email)) {
+            map.put("emailMsg", "邮箱不能为空！");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空！");
+        }
+
+        // 验证邮箱
+        User user = userMapper.selectByEmail(email);
+        if (user == null) {
+            map.put("emailMsg", "该邮箱尚未注册！");
+            return map;
+        }
+
+        // 重置密码
+        password = CommunityUtil.md5(password + user.getSalt());
+        userMapper.updatePassword(user.getId(), password);
+
+        map.put("user", user);
+        return map;
     }
 }
