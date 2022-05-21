@@ -14,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -49,6 +49,12 @@ public class UserController {
         return "/site/setting";
     }
 
+    /**
+     * 上传头像
+     * @param headerImage
+     * @param model
+     * @return
+     */
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
@@ -84,6 +90,11 @@ public class UserController {
         return "redirect:/index";
     }
 
+    /**
+     * 获取头像存储路径
+     * @param fileName
+     * @param response
+     */
     @RequestMapping(path = "/header/{fileName}", method = RequestMethod.GET)
     public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response) {
         // 服务器存放路径
@@ -103,6 +114,20 @@ public class UserController {
             }
         } catch (IOException e) {
             logger.error("读取头像失败：" + e.getMessage());
+        }
+    }
+
+    @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
+    public String updatePassword(String oldPassword, String newPassword, Model model) {
+        User user = hostHolder.getUser();
+
+        Map<String, Object> map = userService.updatePassword(user.getId(), oldPassword, newPassword);
+        if (map == null || map.isEmpty()) {
+            return "redirect:/logout";
+        } else {
+            model.addAttribute("oldPasswordMsg", map.get("oldPasswordMsg"));
+            model.addAttribute("newPasswordMsg", map.get("newPasswordMsg"));
+            return "/site/setting";
         }
     }
 }

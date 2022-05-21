@@ -180,6 +180,7 @@ public class UserService implements CommunityConstant {
         loginTicketMapper.updateStatus(ticket, 1);
     }
 
+    // 发送验证码
     public Map<String, Object> verifyEmail(String email) {
         Map<String, Object> map = new HashMap<>();
 
@@ -207,6 +208,7 @@ public class UserService implements CommunityConstant {
         return map;
     }
 
+    // 重置密码
     public Map<String, Object> resetPassword(String email, String password) {
         Map<String, Object> map = new HashMap<>();
 
@@ -238,7 +240,36 @@ public class UserService implements CommunityConstant {
         return loginTicketMapper.selectByTicket(ticket);
     }
 
+    // 更新用户头像链接
     public int updateHeader(int userId, String headerUrl) {
         return userMapper.updateHeaderUrl(userId, headerUrl);
+    }
+
+    // 修改密码
+    public Map<String, Object> updatePassword(int userId, String oldPassword, String newPassword) {
+        Map<String, Object> map = new HashMap<>();
+
+        // 空值处理
+        if (StringUtils.isBlank(oldPassword)) {
+            map.put("oldPasswordMsg", "原密码不能为空！");
+            return map;
+        }
+        if (StringUtils.isBlank(newPassword)) {
+            map.put("newPasswordMsg", "新密码不能为空！");
+            return map;
+        }
+
+        // 验证原始密码
+        User user = userMapper.selectById(userId);
+        oldPassword = CommunityUtil.md5(oldPassword + user.getSalt());
+        if (!user.getPassword().equals(oldPassword)) {
+            map.put("oldPasswordMsg", "原密码输入有误！");
+            return map;
+        }
+
+        // 更新密码
+        newPassword = CommunityUtil.md5(newPassword + user.getSalt());
+        userMapper.updatePassword(userId, newPassword);
+        return map;
     }
 }
