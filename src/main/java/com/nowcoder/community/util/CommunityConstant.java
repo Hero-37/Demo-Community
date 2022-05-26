@@ -26,4 +26,14 @@ public interface CommunityConstant {
      * 记住状态登录凭证的过期时间，100天
      */
     int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 100;
+
+    /**
+     * 实体类型：帖子
+     */
+    int ENTITY_TYPE_DISCUSS_POST = 1;
+
+    /**
+     * 实体类型：评论
+     */
+    int ENTITY_TYPE_COMMENT = 2;
 }
