@@ -36,6 +36,12 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private CommentService commentService;
 
+    /**
+     * 发布帖子
+     * @param title
+     * @param content
+     * @return
+     */
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title, String content) {
@@ -55,6 +61,13 @@ public class DiscussPostController implements CommunityConstant {
         return CommunityUtil.getJsonString(0, "发布成功！");
     }
 
+    /**
+     * 帖子详情
+     * @param discussPostId
+     * @param model
+     * @param page
+     * @return
+     */
     @RequestMapping(path = "/detail/{discussPostId}", method = RequestMethod.GET)
     public String getDiscussPost(@PathVariable("discussPostId") int discussPostId, Model model, Page page) {
         // 帖子
