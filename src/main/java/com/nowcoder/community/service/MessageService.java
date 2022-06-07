@@ -56,7 +56,7 @@ public class MessageService {
     }
 
     /**
-     * 删除消息
+     * 删除消息, 接收方和发送方同时删除
      * @param id
      * @return
      */
