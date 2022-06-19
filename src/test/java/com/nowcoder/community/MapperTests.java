@@ -109,7 +109,7 @@ public class MapperTests {
     @Test
     public void testInsertDiscussPost() {
         DiscussPost discussPost = new DiscussPost();
-        discussPost.setUserId("149");
+        discussPost.setUserId(149);
         discussPost.setTitle("测试插入DiscussPost");
         discussPost.setContent("测试能成功吗？我们拭目以待！");
         discussPost.setType(0);

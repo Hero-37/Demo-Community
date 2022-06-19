@@ -44,7 +44,7 @@ public class HomeController implements CommunityConstant {
             for (DiscussPost discussPost : list) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("discussPost", discussPost);
-                User user = userService.findUserById(Integer.parseInt(discussPost.getUserId()));
+                User user = userService.findUserById(discussPost.getUserId());
 
                 // 帖子赞的数量
                 long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_DISCUSS_POST, discussPost.getId());

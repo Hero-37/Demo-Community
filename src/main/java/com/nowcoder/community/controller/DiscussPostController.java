@@ -55,7 +55,7 @@ public class DiscussPostController implements CommunityConstant {
         }
 
         DiscussPost discussPost = new DiscussPost();
-        discussPost.setUserId(String.valueOf(user.getId()));
+        discussPost.setUserId(user.getId());
         discussPost.setTitle(title);
         discussPost.setContent(content);
         discussPost.setCreateTime(new Date());
@@ -79,7 +79,7 @@ public class DiscussPostController implements CommunityConstant {
         model.addAttribute("discussPost", discussPost);
 
         // 帖子作者
-        User user = userService.findUserById(Integer.parseInt(discussPost.getUserId()));
+        User user = userService.findUserById(discussPost.getUserId());
         model.addAttribute("user", user);
 
         // 点赞数量
