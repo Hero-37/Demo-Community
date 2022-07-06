@@ -28,7 +28,7 @@ public class RedisKeyUtil {
 
     // 某个实体拥有的粉丝
     // follower:entityType:entityId -> zset(userId, now)
-    public static String getFollowerKey(int entityId, int entityType) {
+    public static String getFollowerKey(int entityType, int entityId) {
         return PREFIX_FOLLOWER + SPLIT + entityType + SPLIT + entityId;
     }
 }
