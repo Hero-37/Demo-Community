@@ -1,7 +1,10 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.entity.DiscussPost;
+import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.FollowService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
@@ -27,6 +30,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -55,6 +61,9 @@ public class UserController implements CommunityConstant {
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private DiscussPostService discussPostService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -173,5 +182,36 @@ public class UserController implements CommunityConstant {
         model.addAttribute("hasFollowed", hasFollowed);
 
         return "/site/profile";
+    }
+
+    // 我的帖子
+    @RequestMapping(path = "/mypost/{userId}", method = RequestMethod.GET)
+    public String getMyPosts(@PathVariable("userId") int userId, Page page, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在！");
+        }
+        model.addAttribute("user", user);
+
+        // 分页信息
+        page.setPath("/user/mypost/" + userId);
+        page.setRows(discussPostService.findDiscussPostRows(userId));
+
+        // 帖子列表
+        List<DiscussPost> discussPostList = discussPostService.findDiscussPosts(userId, page.getOffset(), page.getLimit());
+        List<Map<String, Object>> discussVOList = new ArrayList<>();
+
+        if (discussPostList != null) {
+            for (DiscussPost discussPost : discussPostList) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("discussPost", discussPost);
+                map.put("likeCount", likeService.findEntityLikeCount(ENTITY_TYPE_DISCUSS_POST, discussPost.getId()));
+                discussVOList.add(map);
+            }
+        }
+
+        model.addAttribute("discussPosts", discussVOList);
+        
+        return "/site/my-post";
     }
 }
