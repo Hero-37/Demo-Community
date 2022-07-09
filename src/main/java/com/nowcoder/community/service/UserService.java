@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService implements CommunityConstant {
@@ -46,7 +47,12 @@ public class UserService implements CommunityConstant {
     private String contextPath;
 
     public User findUserById(int id) {
-        return userMapper.selectById(id);
+//        return userMapper.selectById(id);
+        User user = getCache(id);
+        if (user == null) {
+            user = initCache(id);
+        }
+        return user;
     }
 
     public Map<String, Object> register(User user) {
@@ -122,6 +128,7 @@ public class UserService implements CommunityConstant {
             return ACTIVATION_REPEAT;
         } else if (user.getActivationCode().equals(code)) {
             userMapper.updateStatus(userId, 1);
+            clearCache(userId);
             return ACTIVATION_SUCCESS;
         } else {
             return ACTIVATION_FAILURE;
@@ -256,7 +263,10 @@ public class UserService implements CommunityConstant {
 
     // 更新用户头像链接
     public int updateHeader(int userId, String headerUrl) {
-        return userMapper.updateHeaderUrl(userId, headerUrl);
+//        return userMapper.updateHeaderUrl(userId, headerUrl);
+        int rows = userMapper.updateHeaderUrl(userId, headerUrl);
+        clearCache(userId);
+        return rows;
     }
 
     // 修改密码
@@ -289,5 +299,25 @@ public class UserService implements CommunityConstant {
 
     public User findUserByName(String username) {
         return userMapper.selectByName(username);
+    }
+
+    // 1. 优先从缓存中取值
+    public User getCache(int userId) {
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        return (User) redisTemplate.opsForValue().get(redisKey);
+    }
+
+    // 2. 取不到时初始化缓存数据
+    public User initCache(int userId) {
+        User user = userMapper.selectById(userId);
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.opsForValue().set(redisKey, user, 3600, TimeUnit.SECONDS);
+        return user;
+    }
+
+    // 3. 数据变更时直接清除数据
+    public void clearCache(int userId) {
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.delete(redisKey);
     }
 }
