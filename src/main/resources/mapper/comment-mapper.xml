@@ -48,7 +48,7 @@
         and exists(
             select id from discuss_post where id = comment.entity_id and status != 2
         )
-        order by create_time by desc
+        order by create_time desc
         limit #{offset}, #{limit}
     </select>
 
