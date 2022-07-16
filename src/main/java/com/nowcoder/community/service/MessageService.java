@@ -3,7 +3,6 @@ package com.nowcoder.community.service;
 import com.nowcoder.community.dao.MessageMapper;
 import com.nowcoder.community.entity.Message;
 import com.nowcoder.community.util.SensitiveFilter;
-import org.attoparser.dom.INestableNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
@@ -62,5 +61,32 @@ public class MessageService {
      */
     public int deleteMessage(int id) {
         return messageMapper.updateStatus(Arrays.asList(new Integer[]{id}), 2);
+    }
+
+    /**
+     * 查询最新的通知
+     */
+    public Message findLatestNotice(int userId, String topic) {
+        return messageMapper.selectLatestNotice(userId, topic);
+    }
+
+    /**
+     * 查询某个主题所包含的通知数量
+     * @param userId
+     * @param topic
+     * @return
+     */
+    public int findNoticeCount(int userId, String topic) {
+        return messageMapper.selectNoticeCount(userId, topic);
+    }
+
+    /**
+     * 查询未读的通知数量
+     * @param userId
+     * @param topic
+     * @return
+     */
+    public int findNoticeUnreadCount(int userId, String topic) {
+        return messageMapper.selectNoticeUnreadCount(userId, topic);
     }
 }
