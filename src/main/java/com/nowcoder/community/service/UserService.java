@@ -173,8 +173,6 @@ public class UserService implements CommunityConstant {
             return map;
         }
 
-        System.out.println(System.currentTimeMillis());
-        System.out.println(System.currentTimeMillis() + expiredSeconds * 1000);
 
         // 生成登陆凭证
         LoginTicket loginTicket = new LoginTicket();
