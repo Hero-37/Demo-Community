@@ -79,7 +79,7 @@ public class MapperTests {
         int rows = discussPostMapper.selectDiscussPostRows(149);
         System.out.println(rows);
 
-        List<DiscussPost> res = discussPostMapper.selectDiscussPosts(149, 0, 10);
+        List<DiscussPost> res = discussPostMapper.selectDiscussPosts(149, 0, 10, 0);
         System.out.println(res.size());
         for (DiscussPost tmp : res) {
             System.out.println(tmp);
