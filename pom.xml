@@ -13,6 +13,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>Demo-Community</name>
     <description>Demo-Community</description>
+    <packaging>war</packaging>
+
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -134,10 +136,10 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-
     </dependencies>
 
     <build>
+        <finalName>ROOT</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
