@@ -4,7 +4,7 @@ $(function () {
 
 function upload() {
     $.ajax({
-       url: "http://up-z2.qiniup.com",
+       url: "http://up-cn-east-2.qiniup.com",
         method: "post",
         processData: false,
         contentType: false,

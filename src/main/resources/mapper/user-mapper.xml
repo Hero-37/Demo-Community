@@ -14,19 +14,19 @@
     
     <select id="selectById" resultType="com.nowcoder.community.entity.User">
         select <include refid="selectFields"></include>
-        from User
+        from user
         where id = #{id}
     </select>
 
     <select id="selectByName" resultType="com.nowcoder.community.entity.User">
         select <include refid="selectFields"></include>
-        from User
+        from user
         where username = #{username}
     </select>
 
     <select id="selectByEmail" resultType="com.nowcoder.community.entity.User">
         select <include refid="selectFields"></include>
-        from User
+        from user
         where email = #{email}
     </select>
     
